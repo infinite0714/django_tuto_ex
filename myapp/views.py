@@ -4,6 +4,7 @@ from django.core.mail import EmailMessage
 from myapp.models import Dreamreal
 from django.http import HttpResponse
 import datetime
+from myapp.forms import Loginform
 
 # Create your views here.
 def hello(request):
@@ -33,49 +34,16 @@ def sendSimpleEmail(request, emailto):
 
     res = email.send()
     return HttpResponse('%s'%res)
-    # res = send_mail(
-    #         'Dear Albertking',
-    #         'Very Interesting',
-    #         'infinite940714@outlook.com',
-    #         [emailto],
-    #         fail_silently=False,
-    #     )
-    # # res = send_mail('hello akira', 'what are you doing?', 'paul@polo.com', [emailto])
-    # return HttpResponse('%s'%res)
+def login(request):
+    username = "not logged in"
 
-# def crudops(request):
-#     #Creating an entry
+    if request.method == 'POST':
+        MyLoginForm = Loginform(request.POST)
 
-#     dreamreal = Dreamreal(
-#         website = "www.polo.com", mail = "sorex@polo.com",
-#         name = "sorex", phonenumber = '1234567890'
-#     )
-#     dreamreal.save()
-
-#     #Read all entries
-#     object = Dreamreal.objects.all()
-#     res = "Printing all Dreamreal entries in the DB: <br>"
-
-#     for elt in object:
-#         res += elt.name + "<br>"
-
-#     #Read a specific entry
-#     sorex = Dreamreal.objects.get(name = 'sorex')
-#     res += 'Printing One entry <br>'
-#     res += sorex.name
-
-#     #Delete an entry
-#     res += '<br>Deleting an entry</br>'
-#     sorex.delete()
-
-#     #Update
-#     dreamreal = Dreamreal(website = "www.polo.com", mail = "sorex@polo.com", 
-#                           name = "sorex", phonenumber = '002376970')
-#     dreamreal.save()
-#     res += '<br>Updating an entry</br>'
-
-#     dreamreal = Dreamreal.objects.get(name = 'sorex')
-#     dreamreal.name = "thierry"
-#     dreamreal.save()
-
-#     return HttpResponse(res)
+        if MyLoginForm.is_valid():
+            username = MyLoginForm.cleaned_data['user']
+            
+    else:
+        MyLoginForm = Loginform()
+    
+    return render(request, 'myapp/loggedin.html', {"username": username})
